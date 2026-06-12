@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//Adding cross origin to all the frontend to make api call to avoid CROS erro
 @CrossOrigin("*")
 @AllArgsConstructor
 @RestController
