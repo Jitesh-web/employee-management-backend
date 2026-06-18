@@ -17,6 +17,7 @@ public class EmployeeController {
 
     private EmployeeService employeeService;
 
+    //Create a new employee
     @PostMapping
     public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto) {
         EmployeeDto savedEmployee = employeeService.createEmployee(employeeDto);
