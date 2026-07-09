@@ -1,5 +1,6 @@
 package net.javaguides.ems.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import net.javaguides.ems.dto.EmployeeDto;
 import net.javaguides.ems.service.EmployeeService;
@@ -20,7 +21,7 @@ public class EmployeeController {
 
     //Create a new employee
     @PostMapping
-    public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
         EmployeeDto savedEmployee = employeeService.createEmployee(employeeDto);
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
@@ -38,7 +39,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{Id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("Id") Long employeeId, @RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("Id") Long employeeId, @Valid @RequestBody EmployeeDto employeeDto) {
         EmployeeDto employee = employeeService.updateEmployee(employeeId, employeeDto);
         return ResponseEntity.ok(employee);
     }

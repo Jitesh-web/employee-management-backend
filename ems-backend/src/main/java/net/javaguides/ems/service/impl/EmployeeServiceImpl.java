@@ -35,6 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
+        if (employees.isEmpty()) {
+            throw new RuntimeException("Employee list is empty");
+        }
         return employees.stream()
                 .map(employee -> EmployeeMapper.mapToEmployeeDto(employee))
                 .toList();
