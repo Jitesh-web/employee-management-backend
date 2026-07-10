@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //Adding cross origin to all the frontend to make api call to avoid CROS erro
 @CrossOrigin("*")
@@ -17,12 +19,17 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(EmployeeController.class);
+
     private EmployeeService employeeService;
 
     //Create a new employee
     @PostMapping
     public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
+        LOGGER.info("Received request to create employee");
         EmployeeDto savedEmployee = employeeService.createEmployee(employeeDto);
+        LOGGER.info("Employee created successfully with id: {}", savedEmployee.getId());
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
     //Get a employee by Id
