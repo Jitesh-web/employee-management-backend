@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 //Adding cross origin to all the frontend to make api call to avoid CROS error
 @Tag(
@@ -78,9 +80,9 @@ public class EmployeeController {
                     description = "Employee retrieved successfully"
             )
     })
-    @GetMapping
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        List<EmployeeDto> employees = employeeService.getAllEmployees();
+    @GetMapping()
+    public ResponseEntity<Page<EmployeeDto>> getAllEmployees(@RequestParam(required = false) String keyword, @RequestParam(required = false) String department, Pageable pageable) {
+        Page<EmployeeDto> employees = employeeService.getAllEmployees(keyword, department, pageable);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
@@ -115,4 +117,16 @@ public class EmployeeController {
         employeeService.deleteEmployeeById(employeeId);
         return ResponseEntity.ok("Employee deleted successfully with employee id: " + employeeId);
     }
+
+//    @GetMapping("/search")
+//    public ResponseEntity<List<EmployeeDto>> searchEmployees(@RequestParam("firstName") String firstName) {
+//        List<EmployeeDto> employees = employeeService.searchEmployees(firstName);
+//        return ResponseEntity.ok(employees);
+//    }
+//
+//    @GetMapping("/filter")
+//    public ResponseEntity<List<EmployeeDto>> filterByDepartment(@RequestParam("department") String department) {
+//        List<EmployeeDto> employees = employeeService.filterByDepartment(department);
+//        return ResponseEntity.ok(employees);
+//    }
 }

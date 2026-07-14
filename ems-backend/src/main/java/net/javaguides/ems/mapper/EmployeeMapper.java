@@ -11,6 +11,7 @@ public class EmployeeMapper {
         empDto.setFirstName(employee.getFirstName());
         empDto.setLastName(employee.getLastName());
         empDto.setEmail(employee.getEmail());
+        empDto.setDepartment(employee.getDepartment());
 
         return empDto;
     }
@@ -21,6 +22,7 @@ public class EmployeeMapper {
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
+        employee.setDepartment(employeeDto.getDepartment());
 
         return employee;
     }

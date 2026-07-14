@@ -10,8 +10,12 @@ import net.javaguides.ems.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @AllArgsConstructor
@@ -41,15 +45,44 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDto> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        if (employees.isEmpty()) {
-            LOGGER.warn("No employees found in the database");
-            throw new RuntimeException("Employee list is empty");
+    public Page<EmployeeDto> getAllEmployees(String keyword,
+                                             String department,
+                                             Pageable pageable) {
+
+        LOGGER.info("Fetching employees with keyword: {}, department: {}",
+                keyword, department);
+
+        Page<Employee> employees;
+
+        if (keyword != null && !keyword.isBlank()
+                && department != null && !department.isBlank()) {
+
+            employees = employeeRepository
+                    .findByFirstNameContainingIgnoreCaseAndDepartmentIgnoreCase(
+                            keyword,
+                            department,
+                            pageable);
+
+        } else if (keyword != null && !keyword.isBlank()) {
+
+            employees = employeeRepository
+                    .findByFirstNameContainingIgnoreCase(keyword, pageable);
+
+        } else if (department != null && !department.isBlank()) {
+
+            employees = employeeRepository
+                    .findByDepartmentIgnoreCase(department, pageable);
+
+        } else {
+
+            employees = employeeRepository.findAll(pageable);
         }
-        return employees.stream()
-                .map(employee -> EmployeeMapper.mapToEmployeeDto(employee))
-                .toList();
+
+        if (employees.isEmpty()) {
+            LOGGER.warn("No employees found");
+        }
+
+        return employees.map(EmployeeMapper::mapToEmployeeDto);
     }
 
     @Override
@@ -59,6 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
+        employee.setDepartment(employeeDto.getDepartment());
         Employee savedEmployee = employeeRepository.save(employee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
@@ -69,4 +103,20 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found to delete with id: " + employeeId));
         employeeRepository.deleteById(employeeId);
     }
+
+//    @Override
+//    public List<EmployeeDto> searchEmployees(String firstName) {
+//        List<Employee> employeeList = employeeRepository.findByFirstNameContainingIgnoreCase(firstName);
+//        return employeeList.stream()
+//                .map(employee -> EmployeeMapper.mapToEmployeeDto(employee))
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<EmployeeDto> filterByDepartment(String department) {
+//        List<Employee> employeeList = employeeRepository.findByDepartmentIgnoreCase(department);
+//        return employeeList.stream()
+//                .map(employee -> EmployeeMapper.mapToEmployeeDto(employee))
+//                .collect(Collectors.toList());
+//    }
 }
