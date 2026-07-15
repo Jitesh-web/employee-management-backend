@@ -4,7 +4,43 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.NamedQueries;
 
+@NamedQueries({
+
+        @NamedQuery(
+                name = "Employee.searchEmployees",
+                query = """
+                    SELECT e
+                    FROM Employee e
+                    WHERE LOWER(e.firstName)
+                    LIKE LOWER(CONCAT('%', :keyword, '%'))
+                    """
+        ),
+
+        @NamedQuery(
+                name = "Employee.filterEmployees",
+                query = """
+                    SELECT e
+                    FROM Employee e
+                    WHERE LOWER(e.department)
+                    = LOWER(:department)
+                    """
+        ),
+
+        @NamedQuery(
+                name = "Employee.searchAndFilterEmployees",
+                query = """
+                    SELECT e
+                    FROM Employee e
+                    WHERE LOWER(e.firstName)
+                    LIKE LOWER(CONCAT('%', :keyword, '%'))
+                    AND LOWER(e.department)
+                    = LOWER(:department)
+                    """
+        )
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

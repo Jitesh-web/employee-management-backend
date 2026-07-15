@@ -58,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 && department != null && !department.isBlank()) {
 
             employees = employeeRepository
-                    .findByFirstNameContainingIgnoreCaseAndDepartmentIgnoreCase(
+                    .searchAndFilterEmployeesNamed(
                             keyword,
                             department,
                             pageable);
@@ -66,12 +66,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else if (keyword != null && !keyword.isBlank()) {
 
             employees = employeeRepository
-                    .findByFirstNameContainingIgnoreCase(keyword, pageable);
+                    .searchEmployeesNamed(keyword, pageable);
 
         } else if (department != null && !department.isBlank()) {
 
             employees = employeeRepository
-                    .findByDepartmentIgnoreCase(department, pageable);
+                    .filterEmployeesNamed(department, pageable);
 
         } else {
 
