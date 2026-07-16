@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.javaguides.ems.dto.EmployeeDto;
 import net.javaguides.ems.entity.Employee;
 import net.javaguides.ems.exception.ResourceNotFoundException;
+import net.javaguides.ems.mapper.AddressMapper;
 import net.javaguides.ems.mapper.EmployeeMapper;
 import net.javaguides.ems.repository.EmployeeRepository;
 import net.javaguides.ems.service.EmployeeService;
@@ -93,6 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
         employee.setDepartment(employeeDto.getDepartment());
+        employee.setAddress(AddressMapper.mapToAddress(employeeDto.getAddress()));
         Employee savedEmployee = employeeRepository.save(employee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }

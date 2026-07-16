@@ -62,4 +62,8 @@ public class Employee {
 
     @Column(name = "department")
     private String department;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
 }
