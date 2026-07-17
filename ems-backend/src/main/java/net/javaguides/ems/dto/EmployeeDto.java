@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.javaguides.ems.entity.Skill;
 
 import java.util.List;
 
@@ -37,4 +38,6 @@ public class EmployeeDto {
     private AddressDto address;
 
     private List<ProjectDto> projects;
+
+    private List<SkillDto> skills;
 }

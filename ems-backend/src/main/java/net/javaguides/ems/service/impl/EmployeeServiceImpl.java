@@ -7,6 +7,7 @@ import net.javaguides.ems.exception.ResourceNotFoundException;
 import net.javaguides.ems.mapper.AddressMapper;
 import net.javaguides.ems.mapper.EmployeeMapper;
 import net.javaguides.ems.mapper.ProjectMapper;
+import net.javaguides.ems.mapper.SkillMapper;
 import net.javaguides.ems.repository.EmployeeRepository;
 import net.javaguides.ems.service.EmployeeService;
 import org.springframework.stereotype.Service;
@@ -107,6 +108,18 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
             employee.getProjects().forEach(project ->
                     project.setEmployee(employee));
+        }
+        if (employeeDto.getSkills() != null) {
+
+            employee.setSkills(
+                    employeeDto.getSkills()
+                            .stream()
+                            .map(SkillMapper::mapToSkill)
+                            .collect(Collectors.toList())
+            );
+
+            employee.getSkills().forEach(skill ->
+                    skill.setEmployees(List.of(employee)));
         }
         Employee savedEmployee = employeeRepository.save(employee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);

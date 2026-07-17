@@ -76,4 +76,13 @@ public class Employee {
     )
     @JsonManagedReference
     private List<Project> projects;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "employee_skills",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    @JsonManagedReference
+    private List<Skill> skills;
 }
