@@ -6,6 +6,7 @@ import net.javaguides.ems.entity.Employee;
 import net.javaguides.ems.exception.ResourceNotFoundException;
 import net.javaguides.ems.mapper.AddressMapper;
 import net.javaguides.ems.mapper.EmployeeMapper;
+import net.javaguides.ems.mapper.ProjectMapper;
 import net.javaguides.ems.repository.EmployeeRepository;
 import net.javaguides.ems.service.EmployeeService;
 import org.springframework.stereotype.Service;
@@ -94,7 +95,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
         employee.setDepartment(employeeDto.getDepartment());
-        employee.setAddress(AddressMapper.mapToAddress(employeeDto.getAddress()));
+        if (employeeDto.getAddress() != null) {
+            employee.setAddress(AddressMapper.mapToAddress(employeeDto.getAddress()));
+        }
+        if (employeeDto.getProjects() != null) {
+            employee.setProjects(
+                    employeeDto.getProjects()
+                            .stream()
+                            .map(ProjectMapper::mapToProject)
+                            .collect(Collectors.toList())
+            );
+            employee.getProjects().forEach(project ->
+                    project.setEmployee(employee));
+        }
         Employee savedEmployee = employeeRepository.save(employee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }

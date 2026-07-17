@@ -1,11 +1,14 @@
 package net.javaguides.ems.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.NamedQueries;
+
+import java.util.List;
 
 @NamedQueries({
 
@@ -66,4 +69,11 @@ public class Employee {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @OneToMany(
+            mappedBy = "employee",
+            cascade = CascadeType.ALL
+    )
+    @JsonManagedReference
+    private List<Project> projects;
 }
