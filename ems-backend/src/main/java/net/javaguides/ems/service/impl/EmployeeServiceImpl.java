@@ -37,11 +37,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
         LOGGER.debug("Saving employee to database");
         Employee savedEmployee = employeeRepository.save(employee);
-
-        if (true) {
-            throw new RuntimeException("Testing Transaction Rollback");
-        }
-
         LOGGER.debug("Employee entity saved successfully: {}", savedEmployee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
