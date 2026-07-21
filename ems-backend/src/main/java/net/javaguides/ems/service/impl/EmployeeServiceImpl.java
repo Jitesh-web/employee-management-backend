@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -30,11 +31,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Override
+    @Transactional
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         LOGGER.debug("Mapping EmployeeDto to Employee entity");
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
         LOGGER.debug("Saving employee to database");
         Employee savedEmployee = employeeRepository.save(employee);
+
+        if (true) {
+            throw new RuntimeException("Testing Transaction Rollback");
+        }
+
         LOGGER.debug("Employee entity saved successfully: {}", savedEmployee);
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
