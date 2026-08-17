@@ -36,4 +36,43 @@ public class JwtService {
                 .signWith(getSigningKey())
                 .compact();
     }
+
+    public String extractUsername(String token) {
+
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    /**
+     * Validate JWT against UserDetails
+     */
+    public boolean isTokenValid(
+            String token,
+            UserDetails userDetails
+    ) {
+
+        String username = extractUsername(token);
+
+        return username.equals(userDetails.getUsername())
+                && !isTokenExpired(token);
+    }
+
+    /**
+     * Check whether JWT is expired
+     */
+    private boolean isTokenExpired(String token) {
+
+        Date expiration = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.before(new Date());
+    }
 }
