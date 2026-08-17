@@ -38,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
                 passwordEncoder.encode(request.getPassword())
         );
 
+        user.setRole("USER");
+
         userRepository.save(user);
     }
 
