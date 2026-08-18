@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import net.javaguides.ems.dto.LoginRequest;
 import net.javaguides.ems.dto.LoginResponse;
+import net.javaguides.ems.dto.RefreshTokenRequest;
 import net.javaguides.ems.dto.RegisterRequest;
 import net.javaguides.ems.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,14 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(
+                authService.refreshToken(request.getRefreshToken())
+        );
     }
 }

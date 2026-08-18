@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.javaguides.ems.dto.LoginRequest;
 import net.javaguides.ems.dto.LoginResponse;
 import net.javaguides.ems.dto.RegisterRequest;
+import net.javaguides.ems.entity.RefreshToken;
 import net.javaguides.ems.entity.User;
 import net.javaguides.ems.exception.UserAlreadyExistsException;
 import net.javaguides.ems.mapper.UserMapper;
@@ -11,6 +12,7 @@ import net.javaguides.ems.repository.UserRepository;
 import net.javaguides.ems.security.CustomUserDetails;
 import net.javaguides.ems.security.JwtService;
 import net.javaguides.ems.service.AuthService;
+import net.javaguides.ems.service.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void register(RegisterRequest request) {
@@ -55,8 +58,40 @@ public class AuthServiceImpl implements AuthService {
         CustomUserDetails userDetails =
                 (CustomUserDetails) authentication.getPrincipal();
 
-        String token = jwtService.generateToken(userDetails);
+        // Generate access token
+        String accessToken =
+                jwtService.generateToken(userDetails);
 
-        return new LoginResponse("Login Successful", token);
+        // Get actual User entity
+        User user = userDetails.getUser();
+
+        // Generate refresh token
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new LoginResponse("Login Successful", accessToken, refreshToken.getToken());
+    }
+
+    @Override
+    public LoginResponse refreshToken(String refreshToken) {
+
+        RefreshToken token =
+                refreshTokenService.findByToken(refreshToken);
+
+        refreshTokenService.verifyExpiration(token);
+
+        User user = token.getUser();
+
+        CustomUserDetails userDetails =
+                new CustomUserDetails(user);
+
+        String newAccessToken =
+                jwtService.generateToken(userDetails);
+
+        return new LoginResponse(
+                "Access Token Refreshed Successfully",
+                newAccessToken,
+                refreshToken
+        );
     }
 }
