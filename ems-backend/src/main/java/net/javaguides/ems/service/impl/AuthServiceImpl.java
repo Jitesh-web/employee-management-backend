@@ -8,6 +8,7 @@ import net.javaguides.ems.entity.RefreshToken;
 import net.javaguides.ems.entity.User;
 import net.javaguides.ems.exception.UserAlreadyExistsException;
 import net.javaguides.ems.mapper.UserMapper;
+import net.javaguides.ems.repository.RefreshTokenRepository;
 import net.javaguides.ems.repository.UserRepository;
 import net.javaguides.ems.security.CustomUserDetails;
 import net.javaguides.ems.security.JwtService;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public void register(RegisterRequest request) {
@@ -93,5 +96,11 @@ public class AuthServiceImpl implements AuthService {
                 newAccessToken,
                 refreshToken
         );
+    }
+
+    @Override
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
 }

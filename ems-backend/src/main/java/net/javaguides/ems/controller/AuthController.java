@@ -2,10 +2,7 @@ package net.javaguides.ems.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import net.javaguides.ems.dto.LoginRequest;
-import net.javaguides.ems.dto.LoginResponse;
-import net.javaguides.ems.dto.RefreshTokenRequest;
-import net.javaguides.ems.dto.RegisterRequest;
+import net.javaguides.ems.dto.*;
 import net.javaguides.ems.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +40,14 @@ public class AuthController {
         return ResponseEntity.ok(
                 authService.refreshToken(request.getRefreshToken())
         );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            @Valid @RequestBody LogoutRequest request) {
+
+        authService.logout(request.getRefreshToken());
+
+        return ResponseEntity.ok("Logout successful");
     }
 }
