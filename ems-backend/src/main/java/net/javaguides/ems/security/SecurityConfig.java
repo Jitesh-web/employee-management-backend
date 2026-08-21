@@ -23,6 +23,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -47,12 +48,18 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register"
+                        .requestMatchers(
+                                "/api/auth/register"
                                 , "/api/auth/login"
                                 , "/api/auth/refresh"
                                 , "/api/auth/logout"
+                                , "/oauth2/**"
+                                , "/login/**"
                         ).permitAll()
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(googleOAuth2SuccessHandler)
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

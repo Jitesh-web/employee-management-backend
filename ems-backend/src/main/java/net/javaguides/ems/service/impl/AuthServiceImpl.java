@@ -34,10 +34,32 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("Email already exists");
+        User existingUser = userRepository
+                .findByEmail(request.getEmail())
+                .orElse(null);
+
+        // User already exists
+        if (existingUser != null) {
+
+            // OAuth-only account
+            if (existingUser.getPassword() == null) {
+
+                existingUser.setPassword(
+                        passwordEncoder.encode(request.getPassword())
+                );
+
+                userRepository.save(existingUser);
+
+                return;
+            }
+
+            // Already a local account
+            throw new UserAlreadyExistsException(
+                    "Email already exists"
+            );
         }
 
+        // Completely new local user
         User user = UserMapper.mapToUser(request);
 
         user.setPassword(
